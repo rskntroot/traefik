@@ -1,80 +1,32 @@
-################################################################
-# Configuration sample for Traefik v2.
-# For Traefik v1: https://github.com/traefik/traefik/blob/v1.7/traefik.sample.toml
-################################################################
-
-################################################################
-# Global configuration
-################################################################
 global:
   checkNewVersion: false
   sendAnonymousUsage: false
-
-################################################################
-# EntryPoints configuration
-################################################################
-
-# EntryPoints definition
 entryPoints:
   web:
     address: :80
-
+    http:
+      redirections:
+        entryPoint:
+          to: websecure
+          priority: 10
   websecure:
     address: :443
-
-################################################################
-# Traefik logs configuration
-################################################################
-
-# Traefik logs
 log:
   level: INFO
-#  filePath: log/traefik.log
+#  filePath: /var/log/traefik/traefik.log
 #  format: json
-
-################################################################
-# Access logs configuration
-################################################################
-
-# Enable access logs
-# By default it will write to stdout and produce logs in the textual
-# Common Log Format (CLF), extended with additional fields.
-#
-# Optional
-#
 accessLog:
-#  filePath: /path/to/log/log.txt
+#  filePath: /var/log/traefik/access.log
   format: common
-
-################################################################
-# API and dashboard configuration
-################################################################
-
-# Enable API and dashboard
 api:
   insecure: true
 #  dashboard: false
-
-################################################################
-# Docker configuration backend
-################################################################
-
 providers:
-  # Enable Docker configuration backend
   docker:
     endpoint: unix:///var/run/docker.sock
-#    defaultRule: Host(`{{ normalize .Name }}.docker.localhost`)
+    swarmMode: true
+    network: traefik_external
     exposedByDefault: false
-
-################################################################
-# Certificate Resolution The Free Way
-################################################################
-
-certificatesResolvers:
-  lets-encr:
-    acme:
-      #caServer: https://acme-staging-v02.api.letsencrypt.org/directory
-      storage: /opt/cert/acme.json
-      email: whatever@gmail.com
-      httpChallenge:
-        entryPoint: web
+  file:
+    filename: /etc/traefik/dynamic.yml
+    watch: true
