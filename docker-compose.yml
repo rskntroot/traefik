@@ -12,7 +12,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - ./etc:/etc/traefik:ro
     networks:
-      - external
+      - internal
 
   whoami:
     image: traefik/whoami:latest
@@ -29,7 +29,7 @@ services:
         - traefik.http.services.whoami.loadbalancer.sticky.cookie.name=whoami-session-token
         - traefik.http.services.whoami.loadbalancer.sticky.cookie.secure=true
     networks:
-      - external
+      - internal
 
   nginx:
     image: nginx:latest
@@ -37,13 +37,19 @@ services:
       labels:
         - traefik.enable=true
         - traefik.http.routers.nginx.entrypoints=websecure
-        - traefik.http.routers.nginx.rule=Host(`nginx.localhost`)
+        - traefik.http.routers.nginx.rule=Path(`/nginx`)
         - traefik.http.routers.nginx.tls=true
         - traefik.http.routers.nginx.service=nginx@swarm
+        - traefik.http.routers.nginx.middlewares=strip_nginx
+        - traefik.http.middlewares.strip_nginx.stripprefix.prefixes=/nginx
         - traefik.http.services.nginx.loadbalancer.server.port=80
     networks:
-      - external
+      - internal
 
 networks:
-  external:
+  internal:
     driver: overlay
+    ipam:
+      config:
+        - subnet: "172.21.0.0/16"
+        - subnet: "8008:135:a::0/48"

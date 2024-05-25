@@ -26,3 +26,6 @@ providers:
     endpoint: unix:///var/run/docker.sock
     network: traefik_external
     exposedByDefault: false
+  file:
+    filename: /etc/traefik/dynamic.yml
+    watch: true
