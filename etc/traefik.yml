@@ -12,21 +12,17 @@ entryPoints:
   websecure:
     address: :443
 log:
-  level: INFO
+  level: DEBUG
 #  filePath: /var/log/traefik/traefik.log
 #  format: json
 accessLog:
 #  filePath: /var/log/traefik/access.log
-  format: common
+  format: json
 api:
   insecure: true
 #  dashboard: false
 providers:
-  docker:
+  swarm:
     endpoint: unix:///var/run/docker.sock
-    swarmMode: true
     network: traefik_external
     exposedByDefault: false
-  file:
-    filename: /etc/traefik/dynamic.yml
-    watch: true
