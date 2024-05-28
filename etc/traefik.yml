@@ -1,6 +1,7 @@
 global:
   checkNewVersion: false
   sendAnonymousUsage: false
+
 entryPoints:
   web:
     address: :80
@@ -11,16 +12,22 @@ entryPoints:
           priority: 10
   websecure:
     address: :443
+    http3:
+      advertisedPort: 443
+
 log:
-  level: DEBUG
-#  filePath: /var/log/traefik/traefik.log
-#  format: json
-accessLog:
-#  filePath: /var/log/traefik/access.log
+  level: INFO
   format: json
+  filePath: /var/log/traefik/traefik.log
+
+accessLog:
+  format: json
+  filePath: /var/log/traefik/access.log
+
 api:
   insecure: true
 #  dashboard: false
+
 providers:
   swarm:
     endpoint: unix:///var/run/docker.sock

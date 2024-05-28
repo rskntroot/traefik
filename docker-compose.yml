@@ -1,4 +1,5 @@
 version: "3.2"
+
 services:
   traefik:
     image: traefik:latest
@@ -11,6 +12,7 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - ./etc:/etc/traefik:ro
+      - ./log:/var/log/traefik:rw
     networks:
       - internal
 
@@ -49,7 +51,3 @@ services:
 networks:
   internal:
     driver: overlay
-    ipam:
-      config:
-        - subnet: "172.21.0.0/16"
-        - subnet: "8008:135:a::0/48"
